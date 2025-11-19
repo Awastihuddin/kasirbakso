@@ -1,7 +1,14 @@
 ## 👤 Pembuat
 
 **Nama Tim** : Mas Brian Sayang Silahkan Maju Kedepan Untuk Mengambil Sembako
+
 **Nama Proyek** — Aplikasi Kasir Bakso Idaman
+
+**Anggota Tim** 
+   - Hamzah Muhammad Ali
+   - Muhammad Fatihuddin Fawwaz
+
+---
 
 ## 🍜 Tentang Proyek
 
