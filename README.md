@@ -1,6 +1,7 @@
 ## 👤 Pembuat
 
-**Nama Tim** : Mas Brian Sayang Silahkan Maju Kedepan Untuk Mengambil Sembako
+**Nama Tim** 
+**Mas Brian Sayang Silahkan Maju Kedepan Untuk Mengambil Sembako**
 
 **Nama Proyek** — Aplikasi Kasir Bakso Idaman
 
