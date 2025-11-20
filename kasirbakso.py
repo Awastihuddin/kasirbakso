@@ -1,38 +1,42 @@
-# NAMA TIM : MAS BRIAN SAYANG SILAHKAN MAJU KE DEPAN UNTUK AMBIL SEMBAKO
+# NAMA TIM : MAS BRIAN SAYANG SILAHKAN MAJU KE DEPAN UNTUK MENGAMBIL SEMBAKO
 # APLIKASI KASIR BAKSO IDAMAN (tanpa library pihak ketiga)
-
-
 import os
 from datetime import datetime
 from pathlib import Path
 import webbrowser
 import time
+import platform
 
-# Folder untuk menyimpan struk
 STRUK_FOLDER = Path.cwd() / 'struk'
 STRUK_FOLDER.mkdir(parents=True, exist_ok=True)
 
-# daftar menu yang berisi kategori, subkategori, dan harga
 menu = {
     'Makanan': {
         'Bakso': {
-            'Bakso Biasa': 1000, 'Bakso Urat': 1500, 'Bakso Besar': 2000, 'Bakso Puyuh': 2500, 'Bakso Mercon': 7000, 'Bakso Keju': 7000, 'Bakso Beranak': 10000
-        },
+            'Bakso Biasa': 1000, 'Bakso Urat': 1500, 'Bakso Besar': 2000, 'Bakso Puyuh': 2500, 'Bakso Rawit': 6000, 'Bakso Mercon': 7000, 'Bakso Keju': 7000, 'Bakso Beranak': 10000
+            },
         'Mie Ayam': {
-            'Mie Ayam Biasa': 5000, 'Mie Ayam Bakso': 8000, 'Mie Ayam Ceker': 8000, 'Mie Ayam Spesial': 11000
-        }
+            'Mie Ayam Biasa': 5000, 'Mie Ayam Bakso': 8000, 'Mie Ayam Ceker': 8000, 'Mie Ayam Spesial': 11000, 'Mie Ayam Jumbo': 13000, 'Mie Ayam Extra Toping': 15000, 'Mie Level': 10000
+            }
     },
     'Minuman': {
-        'Air Mineral Biasa': 2000, 'Es Teh': 3000, 'Es Jeruk': 4000, 'Es Degan': 5000, 'Es Campur': 6000
+        'Air Mineral Biasa': 2000, 'Es Teh': 3000, 'Es Jeruk': 4000, 'Es Degan': 5000, 'Es Campur': 6000, 'Es Soda Gembira': 6500, 'Es Susu Coklat': 6000, 'Es Blewah': 7000
     },
     'Sampingan': {
-        'Pangsit': 1000, 'Ceker': 3000, 'Lontong': 2500, 'Tahu': 2000
+        'Pangsit': 1000, 'Ceker': 3000, 'Lontong': 2500, 'Tahu': 2000, 'Sate Telur Puyuh': 3000, 'Tahu Bakso': 2500
     }
 }
 
 pesanan = {}
 
 # ------------------ Helper functions ------------------
+
+def clear():
+    if platform.system() == "Windows":
+        os.system("cls")
+    else:
+        os.system("clear")
+
 
 def pilih_kategori():
     while True:
@@ -79,6 +83,8 @@ def pilih_item(kategori):
 
 
 def tampilkan_menu():
+    clear()
+    print("\n--- Daftar Menu ---")
     for kategori, items in menu.items():
         print(f"\n{kategori}:")
         if isinstance(items, dict):
@@ -107,76 +113,102 @@ def cari_harga(nama):
 
 
 def tambah_pesanan():
+    clear()
     while True:
-        try:
-            kategori = pilih_kategori()
-            item = pilih_item(kategori)
-            if item:
+        kategori = pilih_kategori()
+        item = pilih_item(kategori)
+        if item:
+            try:
                 jumlah = int(input(f"Berapa banyak {item} yang ingin ditambah?: "))
-                if jumlah <= 0:
-                    print("Jumlah harus lebih dari 0. Silakan coba lagi.")
-                    continue
-                harga = cari_harga(item)
-                if harga is not None:
-                    pesanan[item] = pesanan.get(item, {'harga': harga, 'jumlah': 0})
-                    pesanan[item]['jumlah'] += jumlah
-                    print(f"{item} berhasil ditambahkan!")
-                    break
-                else:
-                    print("Item tidak ditemukan di menu!")
-        except ValueError:
-            print("Input tidak valid. Harap masukkan angka.")
+            except ValueError:
+                print("Input tidak valid. Harap masukkan angka.")
+                continue
+
+            if jumlah <= 0:
+                print("Jumlah harus lebih dari 0. Silakan coba lagi.")
+                continue
+            harga = cari_harga(item)
+            if harga is not None:
+                pesanan[item] = pesanan.get(item, {'harga': harga, 'jumlah': 0})
+                pesanan[item]['jumlah'] += jumlah
+                print(f"{item} berhasil ditambahkan!")
+                time.sleep(0.8)
+                clear()
+                break
+            else:
+                print("Item tidak ditemukan di menu!")
+                time.sleep(0.8)
+                clear()
 
 
 def hapus_pesanan():
+    clear()
+    if not pesanan:
+        print("\nBelum ada pesanan untuk dihapus.")
+        time.sleep(1)
+        clear()
+        return
+
     tampilkan_pesanan()
-    if pesanan:
-        try:
-            pilihan = int(input("Masukkan nomor pesanan yang ingin dihapus: ")) - 1
-            item_list = list(pesanan.keys())
-            if 0 <= pilihan < len(item_list):
-                del pesanan[item_list[pilihan]]
-                print("Pesanan berhasil dihapus!")
-            else:
-                print("Nomor tidak valid.")
-        except ValueError:
-            print("Input tidak valid. Harap masukkan angka.")
+    try:
+        pilihan = int(input("Masukkan nomor pesanan yang ingin dihapus: ")) - 1
+        item_list = list(pesanan.keys())
+        if 0 <= pilihan < len(item_list):
+            removed = item_list[pilihan]
+            del pesanan[removed]
+            print(f"Pesanan '{removed}' berhasil dihapus!")
+        else:
+            print("Nomor tidak valid.")
+    except ValueError:
+        print("Input tidak valid. Harap masukkan angka.")
+    time.sleep(1)
+    clear()
 
 
 def kurangi_pesanan():
-    tampilkan_pesanan()
-    if pesanan:
-        try:
-            pilihan = int(input("Masukkan nomor pesanan yang ingin dikurangi: ")) - 1
-            item_list = list(pesanan.keys())
-            if pilihan < 0 or pilihan >= len(item_list):
-                print("Nomor pesanan tidak valid. Silakan coba lagi.")
-                return
-            item = item_list[pilihan]
-            jumlah = int(input(f"Masukkan jumlah {item} yang ingin dikurangi: "))
+    clear()
+    if not pesanan:
+        print("\nBelum ada pesanan untuk dikurangi.")
+        time.sleep(1)
+        clear()
+        return
 
-            if jumlah < pesanan[item]['jumlah']:
-                pesanan[item]['jumlah'] -= jumlah
-                print(f"Jumlah {item} berhasil dikurangi!")
-            elif jumlah == pesanan[item]['jumlah']:
-                del pesanan[item]
-                print(f"{item} dihapus dari pesanan.")
-            else:
-                print(f"Jumlah yang ingin dikurangi melebihi jumlah {item} dalam pesanan.")
-        except ValueError:
-            print("Input tidak valid. Harap masukkan angka.")
+    tampilkan_pesanan()
+    try:
+        pilihan = int(input("Masukkan nomor pesanan yang ingin dikurangi: ")) - 1
+        item_list = list(pesanan.keys())
+        if pilihan < 0 or pilihan >= len(item_list):
+            print("Nomor pesanan tidak valid. Silakan coba lagi.")
+            time.sleep(1)
+            clear()
+            return
+        item = item_list[pilihan]
+        jumlah = int(input(f"Masukkan jumlah {item} yang ingin dikurangi: "))
+
+        if jumlah < pesanan[item]['jumlah']:
+            pesanan[item]['jumlah'] -= jumlah
+            print(f"Jumlah {item} berhasil dikurangi!")
+        elif jumlah == pesanan[item]['jumlah']:
+            del pesanan[item]
+            print(f"{item} dihapus dari pesanan.")
+        else:
+            print(f"Jumlah yang ingin dikurangi melebihi jumlah {item} dalam pesanan.")
+    except ValueError:
+        print("Input tidak valid. Harap masukkan angka.")
+    time.sleep(1)
+    clear()
 
 
 def tampilkan_pesanan():
+    print("\n--- Pesanan Anda ---")
     if not pesanan:
         print("\nBelum Ada Pesanan")
     else:
         total_harga = sum(info['harga'] * info['jumlah'] for info in pesanan.values())
-        print("\n--- Pesanan Anda ---")
         for index, (nama, info) in enumerate(pesanan.items(), 1):
             total = info['harga'] * info['jumlah']
             print(f"{index}. {nama} (x{info['jumlah']}) - Rp {info['harga']} -> Rp {total}")
-        print(f"Total Harga: Rp {total_harga}")
+        print(f"\nTotal Harga: Rp {total_harga}")
 
 
 def tampilkan_struk_keluar():
@@ -233,7 +265,7 @@ def generate_html_file():
     <!doctype html>
     <html>
     <head>
-      <meta charset=\"utf-8\"> 
+      <meta charset="utf-8"> 
       <title>Struk Pesanan</title>
       <style>
         body {{ font-family: Arial, sans-serif; margin: 20px; }}
@@ -246,11 +278,11 @@ def generate_html_file():
       </script>
     </head>
     <body>
-      <div class=\"content\">
+      <div class="content">
         <h1>Struk Pesanan - Bakso Idaman</h1>
         {''.join(lines)}
-        <p class=\"total\">Total: Rp {total_harga}</p>
-        <p style=\"text-align:center;\">Terima kasih telah berbelanja di Bakso Idaman</p>
+        <p class="total">Total: Rp {total_harga}</p>
+        <p style="text-align:center;">Terima kasih telah berbelanja di Bakso Idaman</p>
       </div>
     </body>
     </html>
@@ -268,21 +300,6 @@ def generate_html_file():
         return None
 
 
-def struk_cetak():
-    tampilkan_struk_keluar()
-    pilihan = input("\nApakah Anda ingin mencetak struk? (y/n): ").lower()
-    if pilihan == 'y':
-        txt_path = simpan_struk()
-        html_path = generate_html_file()
-        print_exit_message(txt_path.name if txt_path else None, html_path.name if html_path else None)
-    elif pilihan == 'n':
-        simpan_struk()
-        print_exit_message()
-    else:
-        print("Pilihan Anda Tidak Valid, Silahkan Coba Lagi!!!")
-        struk_cetak()
-
-
 def print_exit_message(txt_filename=None, html_filename=None):
     if txt_filename:
         print(f"\nStruk disimpan sebagai {txt_filename}.")
@@ -291,46 +308,85 @@ def print_exit_message(txt_filename=None, html_filename=None):
     print("Terimakasih Telah Menggunakan Program Kasir Bakso Idaman")
 
 
-def ulangi():
-    pilihan = input("\nApakah Anda ingin mengulangi Programnya (y/n) :  ")
+def struk_cetak():
+    clear()
+    """
+    Menampilkan struk, menanyakan pencetakan, menyimpan struk, lalu
+    *mengosongkan pesanan* agar transaksi berikutnya dimulai dari kosong.
+    """
+    tampilkan_struk_keluar()
+    pilihan = input("\nApakah Anda ingin mencetak struk? (y/n): ").strip().lower()
     if pilihan == 'y':
-        kasir()
+        txt_path = simpan_struk()
+        html_path = generate_html_file()
+        print_exit_message(txt_path.name if txt_path else None, html_path.name if html_path else None)
     elif pilihan == 'n':
-        print("Terimakasih Telah Menggunakan Program Kasir Bakso Idaman")
+        txt_path = simpan_struk()
+        print_exit_message(txt_path.name if txt_path else None, None)
     else:
         print("Pilihan Anda Tidak Valid, Silahkan Coba Lagi!!!")
-        ulangi()
+        time.sleep(1)
+        clear()
+        return struk_cetak()
+    pesanan.clear()
+    print("\nPesanan telah dikosongkan. Anda bisa membuat pesanan baru.\n")
+    time.sleep(1)
+    clear()
 
 
 def kasir():
+    clear()
     while True:
-        pilihan = input("\n--- Aplikasi Kasir Tukang Bakso ---\n1. Tampilkan Menu\n2. Tambah Pesanan\n3. Kurangi Pesanan\n4. Hapus Pesanan\n5. Tampilkan Pesanan\n6. Selesaikan Pesanan\n7. Keluar Tanpa Belanja\nPilih menu (1/2/3/4/5/6/7): ")
+        tampilkan_pesanan()
+        pilihan = input(
+            "\n--- Aplikasi Kasir Tukang Bakso ---\n"
+            "1. Tampilkan Menu\n"
+            "2. Tambah Pesanan\n"
+            "3. Kurangi Pesanan\n"
+            "4. Hapus Pesanan\n"
+            "5. Selesaikan Pesanan\n"
+            "6. Keluar Tanpa Belanja\n"
+            "Pilih menu (1/2/3/4/5/6): ").strip()
+
         if pilihan == '1':
             tampilkan_menu()
+            input("\nTekan Enter untuk kembali...")
+            clear()
+
         elif pilihan == '2':
             tambah_pesanan()
+
         elif pilihan == '3':
             kurangi_pesanan()
+
         elif pilihan == '4':
             hapus_pesanan()
+
         elif pilihan == '5':
-            tampilkan_pesanan()
-        elif pilihan == '6':
             struk_cetak()
-            pilih = input("Apakah anda ingin membuat pesanan lain? (y/n): ").lower()
-            if pilih == 'y':
-                kasir()
-            elif pilih == 'n':
-                print("Terimakasih sudah menggunakan Program Kasir Bakso Idaman, Semoga harimu menyenangkan :D")
-                time.sleep (3)
-                os._exit(0)
-            else:
-                print("Pilihan Anda Tidak Valid, Silahkan Coba Lagi!!!")
-        elif pilihan == '7':
+            while True:
+                pilih = input("Apakah anda ingin membuat pesanan lain? (y/n): ").strip().lower()
+                if pilih == 'y':
+                    clear()
+                    break  
+                elif pilih == 'n':
+                    print("Terimakasih sudah menggunakan Program Kasir Bakso Idaman, Semoga harimu menyenangkan :D")
+                    time.sleep(3)
+                    os._exit(0)
+                else:
+                    print("Pilihan Anda Tidak Valid, Silahkan Coba Lagi!!!")
+                    continue
+
+        elif pilihan == '6':
             print("Terimakasih sudah menggunakan Program Kasir Bakso Idaman, Semoga harimu menyenangkan :D")
-            time.sleep (3)
+            time.sleep(3)
             os._exit(0)
+
         else:
             print("Pilihan Anda Tidak Valid, Silahkan Coba Lagi!!!")
+            time.sleep(3)
+            clear()
 
-kasir()
+
+if __name__ == "__main__":
+    kasir()
